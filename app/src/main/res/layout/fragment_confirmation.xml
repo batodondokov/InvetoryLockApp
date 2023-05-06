@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingEnd="22dp"
+    android:paddingStart="22dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/confirmation_tv"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:layout_margin="30dp"
+        android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/confirmTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/confirmation_desc_tv"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="@string/code_from_letter_tv"
+        android:textColor="@color/black"
+        android:textSize="20sp"/>
+    <EditText
+        android:id="@+id/confCode"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@drawable/input_field_background"
+        android:inputType="number"/>
+    <Button
+        android:id="@+id/confirmBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="@string/send_btn"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/brown" />
+
+    <Button
+        android:id="@+id/resendBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="@string/resend_btn"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/brown" />
+
+</LinearLayout>
