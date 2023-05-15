@@ -1,3 +1,3 @@
 package com.example.invetorylock
 
-data class Container (val id: Int, val color: String, val status: Boolean, val imgId: Int)
+data class Container (val id: Int, val color: String, val status: Int, var imgId: Int ?= 0)

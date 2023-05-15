@@ -19,12 +19,14 @@ class ContainerHolder(item: View): RecyclerView.ViewHolder(item) {
         R.drawable.gray_unlocked)
 
     fun bind(container: Container, listener: ContainerAdapter.Listener){
-        val status = if (container.status) "закрыт" else "открыт"
-        with(binding){
-            ivTitle.setImageResource(imageList[container.imgId])
-            tvTitle.text = "${container.color} ящик №${container.id} $status"
-            itemView.setOnClickListener{
-                listener.onClick(container)
+        val status = if (container.status == 1) "закрыт" else "открыт"
+        if (container.imgId != null){
+            with(binding){
+                ivTitle.setImageResource(imageList[container.imgId!!])
+                tvTitle.text = "${container.color} ящик №${container.id} $status"
+                itemView.setOnClickListener{
+                    listener.onClick(container)
+                }
             }
         }
     }

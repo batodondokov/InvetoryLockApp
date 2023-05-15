@@ -1,6 +1,6 @@
 package com.example.invetorylock.retrofit
 
 data class AuthenticationRequest(
-    val userName: String?,
-    val userEmail: String?
+    val user_name: String,
+    val user_email: String
     )
