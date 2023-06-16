@@ -10,15 +10,7 @@
         android:name="com.example.invetorylock.AuthenticationFragment"
         android:label="AuthenticationFragment" >
         <action
-            android:id="@+id/action_authenticationFragment_to_confirmationFragment"
-            app:destination="@id/confirmationFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/confirmationFragment"
-        android:name="com.example.invetorylock.ConfirmationFragment"
-        android:label="ConfirmationFragment" >
-        <action
-            android:id="@+id/action_confirmationFragment_to_containersListFragment"
+            android:id="@+id/action_authenticationFragment_to_containersListFragment"
             app:destination="@id/containersListFragment" />
     </fragment>
     <fragment

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.example.invetorylock.databinding.FragmentAuthenticationBinding
-import com.example.invetorylock.databinding.FragmentConfirmationBinding
 import com.example.invetorylock.retrofit.AuthenticationRequest
 import com.example.invetorylock.retrofit.AuthenticationResponse
 import com.example.invetorylock.retrofit.MainAPI
@@ -71,9 +70,8 @@ class AuthenticationFragment : Fragment() {
                 })
                 val bundle = Bundle()
                 bundle.putString("userEmail", userEmail)
-                bundle.putString("token", token)
                 Navigation.findNavController(view)
-                    .navigate(R.id.action_authenticationFragment_to_confirmationFragment, bundle)
+                    .navigate(R.id.action_authenticationFragment_to_containersListFragment, bundle)
             }
         }
     }

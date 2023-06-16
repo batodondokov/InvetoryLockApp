@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:layout_marginBottom="20dp"
-    android:orientation="vertical"
-    tools:ignore="UseCompoundDrawables">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvTitle"
@@ -17,11 +13,11 @@
         android:textSize="24sp" />
 
     <ImageView
-        android:id="@+id/ivTitle"
+        android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:src="@drawable/default_box"
-        android:contentDescription="@string/box_image_desc" />
+        android:contentDescription="box_image"
+        android:src="@drawable/default_box" />
 
 </LinearLayout>
