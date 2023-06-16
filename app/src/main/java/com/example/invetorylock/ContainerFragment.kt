@@ -8,25 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.example.invetorylock.databinding.FragmentOpenedContainerBinding
 import com.example.invetorylock.retrofit.AccountingRequest
 import com.example.invetorylock.retrofit.Container
-import com.example.invetorylock.retrofit.MainAPI
 import com.example.invetorylock.retrofit.NetHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 
 class ContainerFragment : Fragment() {
     lateinit var binding: FragmentOpenedContainerBinding
-    lateinit var mainAPI: MainAPI
+    private val viewModel: TokenViewModel by activityViewModels()
     private lateinit var mqttClient: MqttAndroidClient
     lateinit var CoontainerTopic: String
     lateinit var cont:  Container
@@ -84,37 +81,23 @@ class ContainerFragment : Fragment() {
         }
 
         binding.controlBtn.setOnClickListener{
-            if (cont.status == 0){
-                publish(CoontainerTopic, "1")
+            publish(CoontainerTopic, if (cont.status == 1) "0" else "1")
+            viewModel.token.observe(viewLifecycleOwner){ token ->
                 CoroutineScope(Dispatchers.IO).launch {
-                    val post = NetHandler.mainApi.performAccounting(
+                    NetHandler.mainApi.performAccounting(
                         AccountingRequest(
                             container_id = cont.id,
-                            token = "648bd724e4773",
-                            status = 1
+                            token = token,
+                            status = if (cont.status == 1) 0 else 1
                         )
                     )
 
                     Log.i(TAG, "performAccounting id = ${cont.id}, status = ${cont.status}")
                 }
-                Navigation.findNavController(view)
-                    .navigate(R.id.action_openedContainerFragment2_to_containersListFragment)
             }
-            if (cont.status == 1){
-                publish(CoontainerTopic, "0")
-                CoroutineScope(Dispatchers.IO).launch {
-                    val post = NetHandler.mainApi.performAccounting(
-                        AccountingRequest(
-                            container_id = cont.id,
-                            token = "648bd724e4773",
-                            status = 0
-                        )
-                    )
 
-                    Log.i(TAG, "performAccounting id = ${cont.id}, status = ${cont.status}")
-                }
-                Navigation.findNavController(view)
-                    .navigate(R.id.action_openedContainerFragment2_to_containersListFragment)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_openedContainerFragment2_to_containersListFragment)
             }
         }
     }

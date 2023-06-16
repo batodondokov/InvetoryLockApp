@@ -52,31 +52,11 @@ class ContainersListFragment : Fragment(), ContainersInteraction {
             }
 
         }
-
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-    }
-
-    private fun openDialog(container: Container){
-        val builder = AlertDialog.Builder(requireActivity())
-        builder.setTitle("Управление")
-        builder.setMessage("Вы хотите открыть ${container.color} ящик №${container.id}?")
-        builder.setPositiveButton("ДА"){ dialogInterface, i ->
-            val bundle = Bundle()
-            val token = ""
-            bundle.putString("token", token)
-            Navigation.findNavController(requireView())
-                .navigate(R.id.action_containersListFragment_to_openedContainerFragment2, bundle)
-        }
-        builder.setNegativeButton("НЕТ"){
-                dialog, i ->
-        }
-
-        builder.show()
     }
 
     override fun onContainerChosen(container: Container) {

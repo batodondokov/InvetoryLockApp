@@ -4,5 +4,5 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class TokenViewModel:ViewModel() {
-    val token = MutableLiveData<String>()
+    var token = MutableLiveData<String>()
 }

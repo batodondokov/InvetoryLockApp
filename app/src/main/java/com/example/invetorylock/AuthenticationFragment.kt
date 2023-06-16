@@ -6,12 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.example.invetorylock.databinding.FragmentAuthenticationBinding
-import com.example.invetorylock.retrofit.AuthenticationRequest
-import com.example.invetorylock.retrofit.AuthenticationResponse
-import com.example.invetorylock.retrofit.MainAPI
+import com.example.invetorylock.retrofit.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AuthenticationFragment : Fragment() {
     lateinit var binding: FragmentAuthenticationBinding
-    lateinit var mainAPI: MainAPI
     private val viewModel: TokenViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -37,41 +35,43 @@ class AuthenticationFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initRetrofit()
         binding.btnLogin.setOnClickListener{
-            val userName = binding.userName.text.toString()
+            val userPassword = binding.userPassword.text.toString()
             val userEmail = binding.userEmail.text.toString()
-            if (userEmail == "" || userName == "" ){
+            if (userEmail == "" || userPassword == "" ){
                 binding.errorsTV.text = "Поля не должны быть пустыми"
             }
             else if (!isValidEmail(userEmail)){
                 binding.errorsTV.text = "Ввели не корректный E-mail"
             }else {
-                val authRequest = mainAPI.auth(
-                    AuthenticationRequest(
-                    userName,
-                    userEmail
-                )
-                )
-                authRequest.enqueue(object : Callback<AuthenticationResponse>{
-                    override fun onResponse(
-                        call: Call<AuthenticationResponse>,
-                        response: Response<AuthenticationResponse>
-                    ) {
-                        val authResponse = response.body()
-                        val token = authResponse?.token
-                        token?.let { it1 -> Log.e("mytag", it1) }
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val authResponse = NetHandler.mainApi.auth(
+                            AuthenticationRequest(
+                                user_password = userPassword,
+                                user_email = userEmail
+                            )
+                        ).token
+
+                        Log.i(ContainersListFragment.TAG, authResponse)
+
+                        requireActivity().runOnUiThread {
+                            viewModel.token.value = authResponse
+                        }
+                    } catch (e: Exception) {
+                        requireActivity().runOnUiThread {
+                            Toast.makeText(
+                                requireContext(),
+                                "Error: ${e.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
 
-                    override fun onFailure(call: Call<AuthenticationResponse>, t: Throwable) {
-                        Log.e("mytag", "Failed to fetch token", t)
-                    }
+                }
 
-                })
-                val bundle = Bundle()
-                bundle.putString("userEmail", userEmail)
                 Navigation.findNavController(view)
-                    .navigate(R.id.action_authenticationFragment_to_containersListFragment, bundle)
+                    .navigate(R.id.action_authenticationFragment_to_containersListFragment)
             }
         }
     }
@@ -79,21 +79,6 @@ class AuthenticationFragment : Fragment() {
     private fun isValidEmail(email: String): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
         return email.matches(emailRegex.toRegex())
-    }
-
-    private fun initRetrofit(){
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-
-        val client = OkHttpClient.Builder()
-            .addInterceptor(interceptor)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://inventorylock.hostfl.ru/InventoryLock/")
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        mainAPI = retrofit.create(MainAPI::class.java)
     }
 
     companion object {

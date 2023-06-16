@@ -27,12 +27,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/user_name_tv"
+        android:text="@string/e_mail_tv"
         android:textColor="@color/black"
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/userName"
+        android:id="@+id/userEmail"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
@@ -45,17 +45,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="@string/e_mail_tv"
+        android:text="Пароль"
         android:textColor="@color/black"
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/userEmail"
+        android:id="@+id/userPassword"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/input_field_background"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:paddingLeft="16dp"
         android:paddingRight="16dp" />
 

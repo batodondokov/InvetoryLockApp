@@ -12,8 +12,8 @@ interface MainAPI {
     @GET("/InventoryLock/containers.php?container_id=1")
     suspend fun getContainer(): Container
 
-    @POST("auth.php")
-    fun auth(@Body authRequest: AuthenticationRequest): Call<AuthenticationResponse>
+    @POST("/InventoryLock/auth.php")
+    suspend fun auth(@Body authRequest: AuthenticationRequest): AuthenticationResponse
 
     @POST("/InventoryLock/accounting.php")
     suspend fun performAccounting(@Body accountingRequest: AccountingRequest)
