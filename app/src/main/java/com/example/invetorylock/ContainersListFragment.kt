@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.invetorylock.databinding.FragmentContainersListBinding
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 class ContainersListFragment : Fragment(), ContainersInteraction {
 
     lateinit var binding: FragmentContainersListBinding
+    private val viewModel: TokenViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,29 +30,24 @@ class ContainersListFragment : Fragment(), ContainersInteraction {
         binding = FragmentContainersListBinding.inflate(inflater)
         binding.root.layoutManager = LinearLayoutManager(requireContext())
 
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
+        viewModel.token.observe(viewLifecycleOwner){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val containers = NetHandler.mainApi.getAllContainers(it).containers
 
-                val containers = NetHandler.mainApi.getAllContainers().containers
-
-                containers.forEach {
-                    Log.i(TAG, it.color)
-                }
-
-                requireActivity().runOnUiThread {
-                    binding.root.adapter = ContainerAdapter(containers as List<Container>, this@ContainersListFragment)
-                }
-            } catch (e: Exception) {
-                requireActivity().runOnUiThread {
-                    Toast.makeText(
-                        requireContext(),
-                        "Error: ${e.message}",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
+                    requireActivity().runOnUiThread {
+                        binding.root.adapter = ContainerAdapter(containers as List<Container>, this@ContainersListFragment)
+                    }
+                } catch (e: Exception) {
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
-
         }
         return binding.root
     }

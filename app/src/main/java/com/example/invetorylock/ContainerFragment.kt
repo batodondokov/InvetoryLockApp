@@ -3,11 +3,11 @@ package com.example.invetorylock
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.example.invetorylock.databinding.FragmentOpenedContainerBinding
@@ -20,54 +20,54 @@ import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 
-
-class ContainerFragment : Fragment() {
+class ContainerFragment: Fragment() {
     lateinit var binding: FragmentOpenedContainerBinding
     private val viewModel: TokenViewModel by activityViewModels()
     private lateinit var mqttClient: MqttAndroidClient
     lateinit var CoontainerTopic: String
-    lateinit var cont:  Container
+    lateinit var cont: Container
     var status = -1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentOpenedContainerBinding.inflate(inflater)
+        viewModel.token.observe(viewLifecycleOwner){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
 
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
+                    val containerResponse = NetHandler.mainApi.getContainer(it, 1)
+                    Log.i(ContainersListFragment.TAG, containerResponse.color)
 
-                val containerResponse = NetHandler.mainApi.getContainer()
-                Log.i(ContainersListFragment.TAG, containerResponse.color)
-
-                requireActivity().runOnUiThread {
-                    cont = containerResponse
-                    if (cont.id == 1){
-                        CoontainerTopic = "InventoryLock/status"
-                        binding.tvBox.text = "Красный ящик №1"
+                    requireActivity().runOnUiThread {
+                        cont = containerResponse
+                        if (cont.id == 1){
+                            CoontainerTopic = "InventoryLock/status"
+                            binding.tvBox.text = "${cont.color} ящик ${if (cont.status == 1) "открыт" else "закрыт"}."
+                        }
+                        if (cont.status == 0){
+                            binding.controlBtn.text = "ОТКРЫТЬ"
+                        }
+                        if (cont.status  == 1){
+                            binding.controlBtn.text = "ЗАКРЫТЬ"
+                        }
                     }
-                    if (cont.status == 0){
-                        binding.controlBtn.text = "ОТКРЫТЬ"
-                        status = 0
-                    }
-                    if (cont.status  == 1){
-                        binding.controlBtn.text = "ЗАКРЫТЬ"
-                        status = 1
+                } catch (e: Exception) {
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${e.message}",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
                     }
                 }
-            } catch (e: Exception) {
-                requireActivity().runOnUiThread {
-                    Toast.makeText(
-                        requireContext(),
-                        "Error: ${e.message}",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
+
             }
-
         }
+
 
         connect(requireContext())
 
@@ -82,12 +82,12 @@ class ContainerFragment : Fragment() {
 
         binding.controlBtn.setOnClickListener{
             publish(CoontainerTopic, if (cont.status == 1) "0" else "1")
-            viewModel.token.observe(viewLifecycleOwner){ token ->
+            viewModel.token.observe(viewLifecycleOwner){
                 CoroutineScope(Dispatchers.IO).launch {
-                    NetHandler.mainApi.performAccounting(
+                    NetHandler.mainApi.performAccounting(it,
                         AccountingRequest(
                             container_id = cont.id,
-                            token = token,
+                            token = it,
                             status = if (cont.status == 1) 0 else 1
                         )
                     )
@@ -95,10 +95,8 @@ class ContainerFragment : Fragment() {
                     Log.i(TAG, "performAccounting id = ${cont.id}, status = ${cont.status}")
                 }
             }
-
             Navigation.findNavController(view)
                 .navigate(R.id.action_openedContainerFragment2_to_containersListFragment)
-            }
         }
     }
 
@@ -109,11 +107,9 @@ class ContainerFragment : Fragment() {
             override fun messageArrived(topic: String?, message: MqttMessage?) {
                 Log.d(TAG, "Receive message: ${message.toString()} from topic: $topic")
             }
-
             override fun connectionLost(cause: Throwable?) {
                 Log.d(TAG, "Connection lost ${cause.toString()}")
             }
-
             override fun deliveryComplete(token: IMqttDeliveryToken?) {
 
             }
@@ -132,7 +128,6 @@ class ContainerFragment : Fragment() {
         } catch (e: MqttException) {
             e.printStackTrace()
         }
-
     }
 
     fun publish(topic: String, msg: String, qos: Int = 1, retained: Boolean = false) {
